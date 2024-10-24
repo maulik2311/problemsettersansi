@@ -1,0 +1,43 @@
+- hosts: localhost
+  gather_facts: yes
+  become: true
+  tasks:
+    - name: creation of network
+      docker_network:
+        name: networkn
+        state: present
+
+    - name: frontend
+      docker_container:
+        name: frontend
+        image: problemsetters/801133-ansible:latest
+        networks:
+          - name: networkn
+        ports:
+          - "8000:8081"
+        state: present
+        restart_policy: always
+        env:
+          DATABASE_HOST: db
+          DATABASE_PORT: "3306"
+          DATABASE_USER: admin1
+          DATABASE_PASSWORD: admin1
+          DATABASE_NAME: finance
+
+          
+    - name: backend
+      docker_container:
+        name: db
+        image: mysql:5.7
+        ports:
+          - "3306:3306"
+        state: present
+        networks:
+          - name: networkn
+        env:
+          MYSQL_ROOT_PASSWORD: admin
+          MYSQL_DATABASE: finance
+          MYSQL_USER: admin1
+          MYSQL_PASSWORD: admin1
+        restart_policy: always
+

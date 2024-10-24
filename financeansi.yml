@@ -1,0 +1,11 @@
+- hosts: localhost
+  gather_facts: false
+  become: yes
+  tasks:
+    - name: finance deployment
+      docker_container:
+          name: c001
+          image: maulikd2397/finance:latest
+          state: started
+          ports:
+            - "8081:8081"

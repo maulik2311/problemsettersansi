@@ -1,0 +1,11 @@
+- hosts: localhost
+  gather_facts: true
+  become: yes
+  tasks:
+    - name: nginx expose
+      docker_container:
+        name: nginxcontainer
+        image: maulikd2397/health:latest
+        state: stopped
+        ports:
+          - "8080:8082"

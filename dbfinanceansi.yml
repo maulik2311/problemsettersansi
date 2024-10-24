@@ -1,0 +1,24 @@
+- hosts: localhost
+  gather_facts: yes
+  become: true
+  tasks:
+    - name: financnce container
+      docker_container:
+        name: finance
+        image: maulikd2397/finance:latest
+        ports:
+          - "8081:8081"
+        state: stopped
+
+    - name: db container
+      docker_container:
+        name: db
+        image: mysql:5.7
+        ports:
+          - "3306:3306"
+        env:
+          MYSQL_ROOT_PASSWORD: admin
+          MYSQL_DATABASE: financedb
+          MYSQL_USER: finance
+          MYSQL_PASSWORD: finance
+        state: stopped
