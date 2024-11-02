@@ -1,0 +1,41 @@
+- hosts: localhost
+  gather_facts: yes
+  become: true
+  tasks:
+    - name: network
+      docker_network:
+        name: networkn
+        state: present
+          
+    - name: db_container
+      docker_container:
+        name: db
+        image: mysql:latest
+        ports:
+          - "3306:3306"
+        restart_policy: always
+        state: present
+        networks:
+          - name: networkn
+        env:
+          MYSQL_ROOT_PASSWORD: admin
+          MYSQL_DATABASE: problemstater
+          MYSQL_USER: admin1
+          MYSQL_PASSWORD: admin1
+
+    - name: web_container
+      docker_container:
+       name: web
+       image: problemsetters/801133-ansible:latest
+       ports:
+           - "8000:80"
+       restart_policy: always
+       state: present
+       networks:
+           - name: networkn
+       env:
+          DATABASE_HOST: db
+          DATABASE_NAME: problemstater
+          DATABASE_PORT: "3306"
+          DATABASE_USER: admin1
+          DATABASE_PASSWORD: admin1
